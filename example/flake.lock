@@ -1,0 +1,102 @@
+{
+  "nodes": {
+    "appwrap": {
+      "inputs": {
+        "home-manager": "home-manager",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1759095080,
+        "narHash": "sha256-Wh/r/C85DVkUkhubAFYe/keU5mvzsxS9i1KnkItDduE=",
+        "path": "/home/netbrain/dev/appwrap",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/netbrain/dev/appwrap",
+        "type": "path"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "appwrap",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1759094885,
+        "narHash": "sha256-axmfkJn19E9yhAgfHcnYX0VM71XCyCMWu/5tUVOpM3U=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "6ee8473173af7a0181a788e8a3d4fa164f4cc72c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "home-manager_2": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1759094885,
+        "narHash": "sha256-axmfkJn19E9yhAgfHcnYX0VM71XCyCMWu/5tUVOpM3U=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "6ee8473173af7a0181a788e8a3d4fa164f4cc72c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1758690382,
+        "narHash": "sha256-NY3kSorgqE5LMm1LqNwGne3ZLMF2/ILgLpFr1fS4X3o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e643668fd71b949c53f8626614b21ff71a07379d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1758690382,
+        "narHash": "sha256-NY3kSorgqE5LMm1LqNwGne3ZLMF2/ILgLpFr1fS4X3o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e643668fd71b949c53f8626614b21ff71a07379d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "appwrap": "appwrap",
+        "home-manager": "home-manager_2",
+        "nixpkgs": "nixpkgs_2"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
