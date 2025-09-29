@@ -14,7 +14,8 @@ let
         pname = binName;
         version = app.version;
         inherit src;
-        extraPkgs = app.extraPkgs;
+        # Convert list to the function form expected by wrapType2
+        extraPkgs = pkgs': app.extraPkgs;
         profile = app.profile;
       };
     in wrapped;
