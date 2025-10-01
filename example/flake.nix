@@ -12,7 +12,8 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-    in {
+    in
+    {
       homeConfigurations.netbrain = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [
@@ -21,28 +22,40 @@
             programs.wrappimage = {
               enable = true;
               apps.warp-terminal = {
-          url = "https://releases.warp.dev/stable/v0.2025.09.24.08.11.stable_00/Warp-x86_64.AppImage";
-          hash = "sha256-PrV7FIMkWE+5vl43uxmwWDhQZi6ynrtR+bQ2gYlpm0U=";
-          binName = "warp-terminal";
+                url = "https://releases.warp.dev/stable/v0.2025.09.24.08.11.stable_00/Warp-x86_64.AppImage";
+                hash = "sha256-PrV7FIMkWE+5vl43uxmwWDhQZi6ynrtR+bQ2gYlpm0U=";
+                binName = "warp-terminal";
+                desktop = {
+                  name = "Warp Terminal";
+                  genericName = "Terminal";
+                  comment = "Fast, modern terminal";
+                  icon = "utilities-terminal"; # or absolute path to an icon
+                  categories = [ "Utility" "TerminalEmulator" ];
+                  terminal = false;
+                  execArgs = "%U"; # or "%F", or null to omit
+                  keywords = [ "terminal" "shell" "warp" ];
+                };
               };
             };
           }
         ];
       };
 
-      packages.${system} = let
-        warp = pkgs.appimageTools.wrapType2 {
-          pname = "warp-terminal";
-          version = "v0.2025.09.24.08.11.stable_00";
-          src = pkgs.fetchurl {
-            url = "https://releases.warp.dev/stable/v0.2025.09.24.08.11.stable_00/Warp-x86_64.AppImage";
-            hash = "sha256-PrV7FIMkWE+5vl43uxmwWDhQZi6ynrtR+bQ2gYlpm0U=";
+      packages.${system} =
+        let
+          warp = pkgs.appimageTools.wrapType2 {
+            pname = "warp-terminal";
+            version = "v0.2025.09.24.08.11.stable_00";
+            src = pkgs.fetchurl {
+              url = "https://releases.warp.dev/stable/v0.2025.09.24.08.11.stable_00/Warp-x86_64.AppImage";
+              hash = "sha256-PrV7FIMkWE+5vl43uxmwWDhQZi6ynrtR+bQ2gYlpm0U=";
+            };
           };
+        in
+        {
+          warp-terminal = warp;
+          default = warp;
         };
-      in {
-        warp-terminal = warp;
-        default = warp;
-      };
 
       devShells.${system}.default = pkgs.mkShell {
         packages = [ self.packages.${system}.warp-terminal ];

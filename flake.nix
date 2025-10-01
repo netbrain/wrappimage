@@ -11,7 +11,8 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
-    in {
+    in
+    {
       homeModules.wrappimage = import ./modules/home-manager/appwrap.nix;
 
       packages = forAllSystems (pkgs: {
@@ -19,15 +20,15 @@
           name = "wrappimage";
           runtimeInputs = with pkgs; [ coreutils curl wget appimage-run ];
           text = ''
-            cat <<'EOH'
-wrappimage is intended to be used declaratively via its Home Manager module.
+                        cat <<'EOH'
+            wrappimage is intended to be used declaratively via its Home Manager module.
 
-Quick start (flake):
-- Add this flake as an input
-- Import homeModules.wrappimage in your Home Manager config
-- Set programs.wrappimage.enable = true;
-- Define programs.wrappimage.apps = { ... };
-EOH
+            Quick start (flake):
+            - Add this flake as an input
+            - Import homeModules.wrappimage in your Home Manager config
+            - Set programs.wrappimage.enable = true;
+            - Define programs.wrappimage.apps = { ... };
+            EOH
           '';
         };
       });

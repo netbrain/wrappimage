@@ -18,7 +18,8 @@ let
         extraPkgs = pkgs': app.extraPkgs;
         profile = app.profile;
       };
-    in wrapped;
+    in
+    wrapped;
 
   mkDesktopEntry = name: app: wrapped:
     let
@@ -35,10 +36,12 @@ let
       withIcon = baseEntry // (optionalAttrs (app.desktop.icon != null) { icon = app.desktop.icon; });
       withComment = withIcon // (optionalAttrs (app.desktop.comment != null) { comment = app.desktop.comment; });
       withGenericName = withComment // (optionalAttrs (app.desktop.genericName != null) { genericName = app.desktop.genericName; });
-      withKeywords = withGenericName // (optionalAttrs (app.desktop.keywords != []) { settings.Keywords = concatStringsSep ";" app.desktop.keywords + ";"; });
-    in withKeywords;
+      withKeywords = withGenericName // (optionalAttrs (app.desktop.keywords != [ ]) { settings.Keywords = concatStringsSep ";" (app.desktop.keywords ++ [ "" ]); });
+    in
+    withKeywords;
 
-in {
+in
+{
   options.programs.wrappimage = {
     enable = mkEnableOption "Declarative AppImage wrappers via appimageTools.wrapType2 (reproducible)";
 
@@ -67,7 +70,7 @@ in {
           };
           extraPkgs = mkOption {
             type = types.listOf types.package;
-            default = [];
+            default = [ ];
             description = "Extra runtime packages needed by the AppImage (e.g., GTK/Qt libs).";
           };
           profile = mkOption {
@@ -78,7 +81,7 @@ in {
 
           desktop = mkOption {
             description = "Desktop entry metadata for this application (to create a .desktop file).";
-            default = {};
+            default = { };
             type = types.submodule {
               options = {
                 name = mkOption {
@@ -118,7 +121,7 @@ in {
                 };
                 keywords = mkOption {
                   type = types.listOf types.str;
-                  default = [];
+                  default = [ ];
                   description = "Keywords (search terms) for desktop entry.";
                 };
               };
@@ -126,7 +129,7 @@ in {
           };
         };
       }));
-      default = {};
+      default = { };
       description = "Map of app names to AppImage definitions.";
     };
   };
@@ -135,7 +138,8 @@ in {
     let
       appPkgs = mapAttrs (n: v: mkPkg n v) cfg.apps;
       desktopEntries = mapAttrs (n: v: mkDesktopEntry n v (appPkgs.${n})) cfg.apps;
-    in {
+    in
+    {
       home.packages = attrValues appPkgs;
       xdg.desktopEntries = desktopEntries;
     }
