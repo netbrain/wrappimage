@@ -20,6 +20,24 @@ let
       };
     in wrapped;
 
+  mkDesktopEntry = name: app: wrapped:
+    let
+      binName = if app.binName != null then app.binName else name;
+      execArgs = if app.desktop.execArgs != null then " " + app.desktop.execArgs else "";
+      execPath = "${wrapped}/bin/${binName}" + execArgs;
+      baseEntry = {
+        name = if app.desktop.name != null then app.desktop.name else binName;
+        exec = execPath;
+        terminal = app.desktop.terminal;
+        type = "Application";
+        categories = app.desktop.categories;
+      };
+      withIcon = baseEntry // (optionalAttrs (app.desktop.icon != null) { icon = app.desktop.icon; });
+      withComment = withIcon // (optionalAttrs (app.desktop.comment != null) { comment = app.desktop.comment; });
+      withGenericName = withComment // (optionalAttrs (app.desktop.genericName != null) { genericName = app.desktop.genericName; });
+      withKeywords = withGenericName // (optionalAttrs (app.desktop.keywords != []) { settings.Keywords = concatStringsSep ";" app.desktop.keywords + ";"; });
+    in withKeywords;
+
 in {
   options.programs.wrappimage = {
     enable = mkEnableOption "Declarative AppImage wrappers via appimageTools.wrapType2 (reproducible)";
@@ -57,6 +75,55 @@ in {
             default = "";
             description = "Shell snippet sourced by the wrapper (e.g., export env vars).";
           };
+
+          desktop = mkOption {
+            description = "Desktop entry metadata for this application (to create a .desktop file).";
+            default = {};
+            type = types.submodule {
+              options = {
+                name = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                  description = "Display name in menus (default: binName).";
+                };
+                genericName = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                  description = "Generic name of the application.";
+                };
+                comment = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                  description = "Short description used as tooltip.";
+                };
+                icon = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                  description = "Icon name from theme or absolute path to icon file.";
+                };
+                categories = mkOption {
+                  type = types.listOf types.str;
+                  default = [ "Utility" ];
+                  description = "Menu categories (e.g., [\"Utility\", \"Network\"]).";
+                };
+                terminal = mkOption {
+                  type = types.bool;
+                  default = false;
+                  description = "Whether to run in a terminal.";
+                };
+                execArgs = mkOption {
+                  type = types.nullOr types.str;
+                  default = "%U";
+                  description = "Arguments placeholder appended to Exec (e.g., %U or %F). Set null to omit.";
+                };
+                keywords = mkOption {
+                  type = types.listOf types.str;
+                  default = [];
+                  description = "Keywords (search terms) for desktop entry.";
+                };
+              };
+            };
+          };
         };
       }));
       default = {};
@@ -64,7 +131,13 @@ in {
     };
   };
 
-  config = mkIf cfg.enable {
-    home.packages = mapAttrsToList (n: v: mkPkg n v) cfg.apps;
-  };
+  config = mkIf cfg.enable (
+    let
+      appPkgs = mapAttrs (n: v: mkPkg n v) cfg.apps;
+      desktopEntries = mapAttrs (n: v: mkDesktopEntry n v (appPkgs.${n})) cfg.apps;
+    in {
+      home.packages = attrValues appPkgs;
+      xdg.desktopEntries = desktopEntries;
+    }
+  );
 }
